@@ -1,0 +1,67 @@
+# Python缓存文件
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# 日志文件
+*.log
+processing.log
+logs/
+
+# 临时文件和目录
+temp_files/
+temp/
+tmp/
+*.tmp
+*.bak
+*.swp
+
+# 配置文件（如果包含敏感信息，可以选择不上传）
+# config.py  # 如果不想上传配置文件，请取消此行注释
+
+# 测试文件和输出
+test_files/
+output/
+备份_*/
+
+# IDE相关文件
+.vscode/
+.idea/
+*.iml
+.vs/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+.project
+.pydevproject
+
+# 文档文件（如果不想上传测试用的Word和Excel文件）
+# *.doc
+# *.docx
+# *.xls
+# *.xlsx
+
+# 操作系统相关
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/ 

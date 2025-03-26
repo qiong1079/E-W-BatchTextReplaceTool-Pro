@@ -1,0 +1,339 @@
+========================================
+        文档批量替换工具使用说明
+========================================
+
+一、工具简介
+-----------------
+本工具用于批量替换 Word 文档和 Excel 表格中的文本内容，同时保留原始格式。
+主要特点：
+1. 支持 .docx、.doc、.xlsx、.xls 文件格式
+2. 可同时处理大量文件，提高工作效率
+3. 支持页眉页脚、文档属性等处理
+4. 保持原有文档格式不变
+5. 自动禁用所有弹窗和提示，实现真正的无人值守批处理
+
+二、使用前准备
+-----------------
+1. 确保已安装 Microsoft Office（Word 和 Excel）
+2. 安装 Python 3.7 或更高版本
+3. 安装必要的 Python 库：
+   打开命令提示符（cmd），执行以下命令：
+   pip install pywin32
+
+三、使用步骤
+-----------------
+1. 配置替换规则和文件路径
+   打开 config.py 文件，修改以下内容：
+   
+   a) 替换规则：修改 REPLACE_RULES 字典
+      例如：
+      REPLACE_RULES = {
+          "旧文本1": "新文本1",
+          "旧文本2": "新文本2",
+          r"\d{4}-\d{2}-\d{2}": "<日期>"  # 正则表达式示例
+      }
+   
+   b) 源文件夹路径：修改 SOURCE_FOLDER
+      例如：
+      SOURCE_FOLDER = r"E:\文档\原始文件"
+   
+   c) 输出文件夹路径：修改 OUTPUT_FOLDER
+      例如：
+      OUTPUT_FOLDER = r"E:\文档\处理后文件"
+
+2. 运行程序
+   双击 docx_formatted_replace.py 或在命令提示符中执行：
+   python docx_formatted_replace.py
+
+3. 查看结果
+   程序运行完成后：
+   - 在控制台可以看到处理统计信息
+   - 在输出文件夹中可以找到处理后的文件
+   - 在程序目录下可以查看 processing.log 日志文件
+
+四、高级设置
+-----------------
+在 config.py 文件中可以调整以下高级设置：
+
+1. 日志设置
+   LOG_FILE = "processing.log"  # 日志文件名
+   LOG_LEVEL = "INFO"  # 日志级别: DEBUG, INFO, WARNING, ERROR, CRITICAL
+
+2. 界面与操作控制
+   SHOW_PROGRESS = True  # 是否显示进度信息
+   BACKUP_ORIGINAL = False  # 是否在处理前备份原始文档
+   MAX_RETRIES = 3  # 处理文件失败时的最大重试次数
+   DISABLE_ALERTS = True  # 是否禁用所有Office应用程序弹窗
+
+3. Excel特有设置
+   EXCEL_SETTINGS = {
+       'UPDATE_LINKS': False,  # 是否更新链接
+       'SHOW_WARNINGS': False,  # 是否显示警告
+       'AUTO_MACROS': False,    # 是否允许宏
+   }
+
+4. Word特有设置
+   WORD_SETTINGS = {
+       'UPDATE_LINKS': False,    # 是否更新链接 
+       'SHOW_WARNINGS': False,   # 是否显示警告
+       'CONFIRM_CONVERSIONS': False,  # 是否确认格式转换
+   }
+
+五、常见问题
+-----------------
+1. 问：程序无法启动，提示"找不到配置文件"
+   答：确保 config.py 文件与 docx_formatted_replace.py 在同一目录下。
+
+2. 问：程序启动但无法处理文件
+   答：检查 Microsoft Office 是否正常安装，并确保文件路径正确。
+
+3. 问：替换后的文件格式异常
+   答：请确保源文件格式正确，如果是 .doc 格式，建议先转换为 .docx 格式。
+
+4. 问：程序运行速度很慢
+   答：批量处理 Office 文件比较耗时，尤其是大文件。可以减少一次处理的文件数量。
+
+5. 问：处理Excel文件时出现弹窗
+   答：如果仍然出现弹窗，确认配置文件中 DISABLE_ALERTS = True 设置正确，并检查
+       Office是否有特殊设置导致无法完全禁用弹窗。如仍有问题，可尝试修改Excel
+       安全设置或关闭受保护视图。
+
+六、新版本改进
+-----------------
+最新版本（V1.9）改进：
+1. 修复Word文档打开时的兼容性问题，删除不支持的"WithWindow"参数
+2. 增强与不同版本Word应用程序的兼容性，确保文档正常打开
+3. 优化错误处理，在参数不兼容时能够正常处理文档
+
+最新版本（V1.8）改进：
+1. 修复程序运行时可能出现的"unsupported format string passed to tuple.__format__"错误
+2. 优化Word文档处理函数的返回值处理，确保正确计数替换次数
+3. 增强错误处理机制，提高程序运行稳定性
+4. 完善日志记录，便于排查问题
+
+最新版本（V1.7）改进：
+1. 修复关键问题：解决部分Word文档只计数不进行实际替换的错误
+2. 引入替换验证机制，确保计数与实际替换一致
+3. 增加多种替换方法，通过不同层次确保文本被正确替换
+   - 查找替换法 - 逐项精确替换
+   - 段落级替换 - 确保段落内容完整替换
+   - 直接内容替换 - 处理复杂布局内容
+4. 针对特殊字符和格式添加了更强的兼容性
+5. 优化替换失败时的强制替换机制
+6. 更详细的日志记录，精确追踪每次替换操作
+
+最新版本（V1.6）改进：
+1. 增强Word文档封面底部日期处理能力，解决公文封面底部日期无法替换的问题
+2. 针对中文格式日期（如"2020年3月22日"）增加专门处理方法
+3. 支持多种日期位置的智能定位：文档底部、表格中、页脚、浮动文本框等
+4. 针对中文公文格式特别优化，确保封面日期能被准确替换
+5. 优先处理底部最后一个表格，针对常见公文格式做了特殊处理
+6. 自动识别标准中文日期格式，精确定位并替换
+
+V1.5版本改进：
+1. 增强Word文档字段(Field)处理功能，解决首页特殊字段无法替换的问题
+2. 支持多种域类型的替换，包括普通域、DocProperty域、表单域等
+3. 增加对域代码(Field Code)和域结果(Field Result)的双重处理
+4. 自动锁定已替换的域，避免内容被自动更新覆盖
+5. 添加域刷新功能，确保替换后域内容立即生效
+6. 特别处理文档信息域，如标题、作者、公司等与文档属性关联的域
+
+V1.4版本改进：
+1. 增强Word文档封面处理功能，解决封面文本无法替换的问题
+2. 支持多种特殊封面元素的替换：文本框、WordArt、SmartArt等
+3. 增加对文档第一页内容的专门处理
+4. 提供多种封面处理方法，确保不同类型的封面都能被正确处理
+5. 对页眉页脚中的特殊文本框增加支持
+
+V1.3版本改进：
+1. 全面增强Word文档处理能力，解决文档替换报错问题
+2. 多种文档内容获取方法，增强兼容性
+3. 对不同Word文档格式的智能处理与转换
+4. 增加了多种保存策略，确保文档能够被正确保存
+5. 更加详细的错误处理和日志记录
+6. 临时文件处理采用更安全的随机命名机制
+
+V1.2版本改进：
+1. 完全禁用所有Office应用程序弹窗，实现真正的无人值守批处理
+2. 使用临时文件处理机制，避免文件锁定问题
+3. 优化错误处理，提高程序稳定性
+4. 新增Excel和Word特有设置，可针对不同文档类型进行精细化控制
+5. 增强日志记录，方便排查问题
+6. 修复替换计数问题，准确统计实际替换的次数而不是规则数量
+7. 增加更详细的替换过程日志，包括每个工作表、页眉页脚中的替换次数
+
+七、注意事项
+-----------------
+1. 处理前请备份重要文件
+2. 使用 r 前缀设置路径，避免路径问题，例如：r"C:\文档\文件"
+3. 首次使用时，建议先用少量文件测试
+4. 程序会自动创建临时文件夹，处理结束后会自动清理
+
+八、技术支持
+-----------------
+如有任何问题或建议，请联系开发者。
+
+========================================
+
+======================================== Document Batch Replacement Tool User Guide
+I. Introduction
+This tool is designed for batch replacement of text content in Word documents and Excel spreadsheets while preserving the original formatting.
+Main features:
+
+Supports .docx, .doc, .xlsx, .xls file formats
+Can process a large number of files simultaneously to improve work efficiency
+Supports processing headers, footers, document properties, etc.
+Maintains the original document format unchanged
+Automatically disables all pop-ups and prompts to achieve true unattended batch processing
+II. Preparations Before Use
+Ensure Microsoft Office (Word and Excel) is installed
+Install Python 3.7 or higher version
+Install necessary Python libraries: Open Command Prompt (cmd) and execute the following command: pip install pywin32
+III. Usage Steps
+Configure replacement rules and file paths
+Open the config.py file and modify the following contents:
+
+a) Replacement Rules: Modify the REPLACE_RULES dictionary
+For example:
+REPLACE_RULES = {
+"Old Text 1": "New Text 1",
+"Old Text 2": "New Text 2",
+r"\d{4}-\d{2}-\d{2}": "<Date>"  # Regular expression example
+}
+
+b) Source Folder Path: Modify SOURCE_FOLDER
+For example:
+SOURCE_FOLDER = r"E:\Documents\Original Files"
+
+c) Output Folder Path: Modify OUTPUT_FOLDER
+For example:
+OUTPUT_FOLDER = r"E:\Documents\Processed Files"
+
+Run the Program
+Double-click docx_formatted_replace.py or run it from the Command Prompt:
+python docx_formatted_replace.py
+
+View Results
+After the program runs:
+
+You can see processing statistics on the console
+Processed files will be found in the output folder
+The processing.log log file can be viewed in the program directory
+IV. Advanced Settings
+In the config.py file, you can adjust the following advanced settings:
+
+Log Settings
+LOG_FILE = "processing.log"  # Log file name
+LOG_LEVEL = "INFO"  # Log level: DEBUG, INFO, WARNING, ERROR, CRITICAL
+
+Interface and Operation Control
+SHOW_PROGRESS = True  # Whether to display progress information
+BACKUP_ORIGINAL = False  # Whether to back up original documents before processing
+MAX_RETRIES = 3  # Maximum number of retries when processing files fails
+DISABLE_ALERTS = True  # Whether to disable all Office application pop-ups
+
+Excel Specific Settings
+EXCEL_SETTINGS = {
+'UPDATE_LINKS': False,  # Whether to update links
+'SHOW_WARNINGS': False,  # Whether to show warnings
+'AUTO_MACROS': False,    # Whether to allow macros
+}
+
+Word Specific Settings
+WORD_SETTINGS = {
+'UPDATE_LINKS': False,    # Whether to update links
+'SHOW_WARNINGS': False,   # Whether to show warnings
+'CONFIRM_CONVERSIONS': False,  # Whether to confirm format conversions
+}
+
+V. Common Issues
+Q: The program cannot start and displays an error message saying "Configuration file not found"
+A: Make sure that the config.py file is in the same directory as docx_formatted_replace.py.
+
+Q: The program starts but cannot process files
+A: Check if Microsoft Office is properly installed and ensure that the file paths are correct.
+
+Q: The format of replaced files is abnormal
+A: Please make sure the source file format is correct. If it's a .doc format, it's recommended to convert it to .docx first.
+
+Q: The program runs very slowly
+A: Processing Office files in batches takes time, especially for large files. You can reduce the number of files processed at once.
+
+Q: Pop-up windows appear when processing Excel files
+A: If pop-ups still occur, confirm that the setting DISABLE_ALERTS = True is correct in the configuration file and check if there are any special settings in Office that prevent complete disabling of pop-ups. If problems persist, try modifying Excel security settings or turning off protected view.
+
+VI. New Version Improvements
+Improvements in the latest version (V1.9):
+
+Comprehensive enhancement of Word document processing capabilities, solving issues with document replacement errors
+Multiple methods for obtaining document content to enhance compatibility
+Intelligent handling and conversion of different Word document formats
+Addition of various saving strategies to ensure documents are saved correctly
+More detailed error handling and logging
+Safer random naming mechanism for temporary file processing
+Improvements in V1.8 version:
+
+Comprehensive enhancement of Word document processing capabilities, solving issues with document replacement errors
+Multiple methods for obtaining document content to enhance compatibility
+Intelligent handling and conversion of different Word document formats
+Addition of various saving strategies to ensure documents are saved correctly
+More detailed error handling and logging
+Safer random naming mechanism for temporary file processing
+Improvements in V1.7 version:
+
+Comprehensive enhancement of Word document processing capabilities, solving issues with document replacement errors
+Multiple methods for obtaining document content to enhance compatibility
+Intelligent handling and conversion of different Word document formats
+Addition of various saving strategies to ensure documents are saved correctly
+More detailed error handling and logging
+Safer random naming mechanism for temporary file processing
+Improvements in V1.6 version:
+
+Comprehensive enhancement of Word document processing capabilities, solving issues with document replacement errors
+Multiple methods for obtaining document content to enhance compatibility
+Intelligent handling and conversion of different Word document formats
+Addition of various saving strategies to ensure documents are saved correctly
+More detailed error handling and logging
+Safer random naming mechanism for temporary file processing
+Improvements in V1.5 version:
+
+Comprehensive enhancement of Word document processing capabilities, solving issues with document replacement errors
+Multiple methods for obtaining document content to enhance compatibility
+Intelligent handling and conversion of different Word document formats
+Addition of various saving strategies to ensure documents are saved correctly
+More detailed error handling and logging
+Safer random naming mechanism for temporary file processing
+Improvements in V1.4 version:
+
+Comprehensive enhancement of Word document processing capabilities, solving issues with document replacement errors
+Multiple methods for obtaining document content to enhance compatibility
+Intelligent handling and conversion of different Word document formats
+Addition of various saving strategies to ensure documents are saved correctly
+More detailed error handling and logging
+Safer random naming mechanism for temporary file processing
+Improvements in V1.3 version:
+
+Comprehensive enhancement of Word document processing capabilities, solving issues with document replacement errors
+Multiple methods for obtaining document content to enhance compatibility
+Intelligent handling and conversion of different Word document formats
+Addition of various saving strategies to ensure documents are saved correctly
+More detailed error handling and logging
+Safer random naming mechanism for temporary file processing
+Improvements in V1.2 version:
+
+Completely disables all Office application pop-ups to achieve truly unattended batch processing
+Uses a temporary file processing mechanism to avoid file locking issues
+Optimizes error handling to improve program stability
+Adds specific settings for Excel and Word to enable fine-grained control over different types of documents
+Enhances log recording for easier troubleshooting
+Fixes replacement count issue, accurately counting actual replacements rather than rule counts
+Adds more detailed logs for replacement processes, including replacement counts in each worksheet, headers, and footers
+VII. Precautions
+Backup important files before processing
+Use the r prefix when setting paths to avoid path issues, e.g., r"C:\Documents\File"
+It is recommended to test with a small number of files when using for the first time
+The program automatically creates a temporary folder which will be cleaned up after processing
+VIII. Technical Support
+Please contact the developer for any questions or suggestions.
+
+========================================
